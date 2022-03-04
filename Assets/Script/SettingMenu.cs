@@ -13,7 +13,7 @@ public class SettingMenu : MonoBehaviour {
     public Text Current_Text;
 
     public AudioClip audioUI;
-    private AudioSource audio;
+    private AudioSource theAudio;
     public int menu_num = 3;
 
     private void Start()
@@ -21,7 +21,7 @@ public class SettingMenu : MonoBehaviour {
         Current_Text.text = 0.ToString();
         Current_Image.texture = ButtonImages[0];
         Screen.SetResolution(Screen.width, Screen.width * 16/9, true);
-        audio = gameObject.AddComponent<AudioSource>();
+        theAudio = gameObject.AddComponent<AudioSource>();
     }
 
     public void Onclick_GameStrat()
@@ -55,7 +55,7 @@ public class SettingMenu : MonoBehaviour {
 
     public void Sound()
     {
-        audio.clip = audioUI;
-        audio.Play();
+        theAudio.clip = audioUI;
+        theAudio.Play();
     }
 }

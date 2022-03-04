@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class Pause : MonoBehaviour {
 
     public AudioClip audioUI;
-    private AudioSource audio;
+    private AudioSource theAudio;
 
     public void Title()
     {
@@ -23,12 +23,12 @@ public class Pause : MonoBehaviour {
     public void Start()
     {
         Screen.SetResolution(Screen.width, Screen.width * 16 / 9, true);
-        audio = gameObject.AddComponent<AudioSource>();
+        theAudio = gameObject.AddComponent<AudioSource>();
     }
 
     public void Sound()
     {
-        audio.clip = audioUI;
-        audio.Play();
+        theAudio.clip = audioUI;
+        theAudio.Play();
     }
 }

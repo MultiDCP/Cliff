@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour {
     public int p1merit=0;
     public int p2merit = 0;
 
-    public Camera camera;
+    public Camera theCamera;
     public float requiredSize;
     private float m_ZoomSpeed;
     private Vector3 m_ZoomSpeed2;
@@ -278,7 +278,7 @@ public class GameManager : MonoBehaviour {
 
     IEnumerator ChangeTurn(int k)
     {
-        Transform temp = camera.transform;//1.73,9.84
+        Transform temp = theCamera.transform;//1.73,9.84
         
         if (k == 1)
         {
@@ -286,12 +286,12 @@ public class GameManager : MonoBehaviour {
             {
                 temp.position = Vector3.Lerp(cameraPoint[1].position, cameraPoint[0].position, (i + 1) / 20);
                 temp.rotation = Quaternion.Lerp(cameraPoint[1].rotation,cameraPoint[0].rotation,(i+1)/20);
-                camera.transform.position = temp.position;
-                camera.transform.rotation = temp.rotation;
+                theCamera.transform.position = temp.position;
+                theCamera.transform.rotation = temp.rotation;
                 yield return new WaitForSeconds(0.01f);
             }
-            camera.transform.position = cameraPoint[1].position;
-            camera.transform.rotation = cameraPoint[1].rotation;
+            theCamera.transform.position = cameraPoint[1].position;
+            theCamera.transform.rotation = cameraPoint[1].rotation;
         }
         else if (k == 0)
         {
@@ -299,12 +299,12 @@ public class GameManager : MonoBehaviour {
             {
                 temp.position = Vector3.Lerp(cameraPoint[0].position, cameraPoint[1].position, (i + 1) / 20);
                 temp.rotation = Quaternion.Lerp(cameraPoint[0].rotation, cameraPoint[1].rotation, (i + 1) / 20);
-                camera.transform.position = temp.position;
-                camera.transform.rotation = temp.rotation;
+                theCamera.transform.position = temp.position;
+                theCamera.transform.rotation = temp.rotation;
                 yield return new WaitForSeconds(0.01f);
             }
-            camera.transform.position = cameraPoint[0].position;
-            camera.transform.rotation = cameraPoint[0].rotation;
+            theCamera.transform.position = cameraPoint[0].position;
+            theCamera.transform.rotation = cameraPoint[0].rotation;
         }
     }
 }

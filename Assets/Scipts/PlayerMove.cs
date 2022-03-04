@@ -11,7 +11,7 @@ public class PlayerMove : MonoBehaviour {
 	public GameObject Left;
 
     public AudioClip audioMove;
-    private AudioSource audio;
+    private AudioSource theAudio;
 
     public GameObject p1;
     public GameObject p2;
@@ -26,7 +26,7 @@ public class PlayerMove : MonoBehaviour {
 
     private void Start()
     {
-        audio =gameObject.AddComponent<AudioSource>();
+        theAudio =gameObject.AddComponent<AudioSource>();
     }
 
     public void ChangePlayer()
@@ -152,8 +152,8 @@ public class PlayerMove : MonoBehaviour {
                     {
                         Move.gameObject.SetActive(false);
                         GameManager._instance.currentpos = GameManager._instance.currentpos + 1;
-                        audio.clip = audioMove;
-                        audio.Play();
+                        theAudio.clip = audioMove;
+                        theAudio.Play();
                         StartCoroutine(MoveChar("right"));
                         
                         Debug.Log("k");
@@ -169,8 +169,8 @@ public class PlayerMove : MonoBehaviour {
                     {
                         Move.gameObject.SetActive(false);
                         GameManager._instance.currentpos = GameManager._instance.currentpos + 7;
-                        audio.clip = audioMove;
-                        audio.Play();
+                        theAudio.clip = audioMove;
+                        theAudio.Play();
                         StartCoroutine(MoveChar("up"));
                         //GameManager._instance.CheckGameFinished();
                         Debug.Log("k");
@@ -186,8 +186,8 @@ public class PlayerMove : MonoBehaviour {
                     {
                         Move.gameObject.SetActive(false);
                         GameManager._instance.currentpos = GameManager._instance.currentpos - 7;
-                        audio.clip = audioMove;
-                        audio.Play();
+                        theAudio.clip = audioMove;
+                        theAudio.Play();
                         StartCoroutine(MoveChar("down"));
                         //GameManager._instance.CheckGameFinished();
                         Debug.Log("k");
@@ -202,8 +202,8 @@ public class PlayerMove : MonoBehaviour {
                     {
                         Move.gameObject.SetActive(false);
                         GameManager._instance.currentpos = GameManager._instance.currentpos - 1;
-                        audio.clip = audioMove;
-                        audio.Play();
+                        theAudio.clip = audioMove;
+                        theAudio.Play();
                         StartCoroutine(MoveChar("left"));
                         Debug.Log("k");
                         

@@ -22,7 +22,7 @@ public class BSHolder : MonoBehaviour {
     public AudioClip audiospin;
     public AudioClip audioput;
 
-    private AudioSource audio;
+    private AudioSource theAudio;
 
     IEnumerator SelectedChecker()    //코루틴 시작 후 1초가 지나면 SELECTED로
     {
@@ -49,7 +49,7 @@ public class BSHolder : MonoBehaviour {
 
     private void Start()
     {
-        audio = gameObject.AddComponent<AudioSource>();
+        theAudio = gameObject.AddComponent<AudioSource>();
     }
 
     public void spawnBS()
@@ -88,8 +88,8 @@ public class BSHolder : MonoBehaviour {
             if (GameManager.Instance().gameBoard.AllBSOnBoard(chilBS) && !GameManager.Instance().gameBoard.BlockOverlayed() && player_num == GameManager.Instance().ThisTurn()) //게임보드 위에 있으면 정확한 자리에 블록 배치 & SELEcted false
             {
                 GameManager.Instance().gameBoard.RenderBlockOnBoard();
-                audio.clip = audioput;
-                audio.Play();
+                theAudio.clip = audioput;
+                theAudio.Play();
                 Destroy(chilBS);
                 selected = false;
                 GameManager.Instance().CheckGameFinished();
@@ -113,14 +113,14 @@ public class BSHolder : MonoBehaviour {
             if (mDirection > 0) //BS 오른쪽 회전
             {
                 chilBS.transform.Rotate(new Vector3(0, 90, 0));
-                audio.clip = audiospin;
-                audio.Play();
+                theAudio.clip = audiospin;
+                theAudio.Play();
             }
             else if (mDirection < 0)    //BS 왼쪽 회전
             {
                 chilBS.transform.Rotate(new Vector3(0, -90, 0));
-                audio.clip = audiospin;
-                audio.Play();
+                theAudio.clip = audiospin;
+                theAudio.Play();
             }
             else
             {

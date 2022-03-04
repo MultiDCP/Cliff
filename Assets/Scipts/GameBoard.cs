@@ -10,12 +10,13 @@ public class GameBoard : MonoBehaviour {
     private int[] playerLoc;
     //public bool[,] renderedBlock = new bool[xGrid, yGrid]; //이미 올려진 블록인지
 
-    public ParticleSystem m_ExplosionParticles;
+    [SerializeField] private ParticleSystem m_ExplosionParticles;
+    [SerializeField] private float particleDuration;
 
     public AudioClip ExplosionAudio;
     public AudioClip audioFall;
 
-    private AudioSource audio;
+    private AudioSource theAudio;
 
     public GameObject p1;
     public GameObject p2;
@@ -24,7 +25,7 @@ public class GameBoard : MonoBehaviour {
 
     void Start()    //초기화
     {
-        audio = gameObject.AddComponent<AudioSource>();
+        theAudio = gameObject.AddComponent<AudioSource>();
         int index = 0;
         for (int i = 0; i < yGrid; i++)
         {
@@ -161,8 +162,8 @@ public class GameBoard : MonoBehaviour {
     {
         float temp = p.transform.position.y;
         yield return new WaitForSeconds(0.5f);
-        audio.clip = audioFall;
-        audio.Play();
+        theAudio.clip = audioFall;
+        theAudio.Play();
         for (int i=0; i<40; i++)
         {
             temp = temp-(0.05f*i );
@@ -197,7 +198,8 @@ public class GameBoard : MonoBehaviour {
                 ParticleSystem m_instance = Instantiate(m_ExplosionParticles, new Vector3(-3.6f + i * 1.2f, 1 + Random.Range(-20, 20) / 100, -5 + j * 1.2f + Random.Range(-20, 20) / 100), Quaternion.identity);
                 m_instance.Play();
                 
-                Destroy(m_instance.gameObject, m_ExplosionParticles.duration);
+                //Destroy(m_instance.gameObject, m_ExplosionParticles.duration);
+                Destroy(m_instance.gameObject, particleDuration);
             }
             GameManager.Instance().blockmap[i + xGrid * j].SetActive(false);
             GameManager.Instance().checking[i + xGrid * (j + 1)] = 0;
@@ -241,8 +243,8 @@ public class GameBoard : MonoBehaviour {
 
     public void DeleteRow(int j)
     {
-        audio.clip = ExplosionAudio;
-        audio.Play();
+        theAudio.clip = ExplosionAudio;
+        theAudio.Play();
         if (GameManager.Instance().ThisTurn() == 0)
         {
             GameManager.Instance().p1merit+=2;
@@ -262,8 +264,8 @@ public class GameBoard : MonoBehaviour {
 
     public void DeleteAllRow()
     {
-        audio.clip = ExplosionAudio;
-        audio.Play();
+        theAudio.clip = ExplosionAudio;
+        theAudio.Play();
         /*
         ParticleSystem m_instance = Instantiate(m_ExplosionParticles, new Vector3(GameManager.Instance().oppositepos%7*1.2f-3.6f, 1 ,-5+ (GameManager.Instance().oppositepos/7))*1.2f, Quaternion.identity);
         GameManager.Instance().loser.SetActive(false);
