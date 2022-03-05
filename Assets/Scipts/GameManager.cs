@@ -6,51 +6,54 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
     public static GameManager _instance = null;
-    public GameObject player1;
-    public GameObject player2;
+
+    [SerializeField] private GameObject player1;
+    [SerializeField] private GameObject player2;
     public GameObject[] blockmap;
     public GameObject[] BlockSets;  //
     public GameBoard gameBoard; //
     public PlayerMove playerMove;
-    public GameObject holders1;
-    public GameObject holders2;
+    [SerializeField] private GameObject holders1;
+    [SerializeField] private GameObject holders2;
 
-    public GameObject p1win;
-    public GameObject p2win;
+    [SerializeField] private GameObject p1win;
+    [SerializeField] private GameObject p2win;
 
-    public RawImage verse;
-    public Image Background;
+    [SerializeField] private Image verse;
+    [SerializeField] private Image Background;
 
-    public float p1GameFinishZone = 5.4f;  //
-    public float p2GameFinishZone = -5.4f;  //
+    [SerializeField] private float p1GameFinishZone = 5.4f;  //
+    [SerializeField] private float p2GameFinishZone = -5.4f;  //
 
-    int check;
+    private int check;
     public int[] checking;
     public GameObject[] boom;
 
-    public Text turnleft;
-    public Text turnleft2;
+    [SerializeField] private Text turnleft;
+    [SerializeField] private Text turnleft2;
 
-    public Text wintext;
-    public GameObject winCanvas;
+    [SerializeField] private Text wintext;
+    [SerializeField] private GameObject winCanvas;
 
-    public int turn_num = 0;
+    [SerializeField] private int turn_num = 0;
 
     public int currentpos;
     public int oppositepos;
     private int temp;
 
-    public int p1merit=0;
+    public int p1merit = 0;
     public int p2merit = 0;
 
-    public Camera theCamera;
-    public float requiredSize;
+    private Camera theCamera;
+    private float requiredSize;
     private float m_ZoomSpeed;
     private Vector3 m_ZoomSpeed2;
-    public float m_DampTime=0.5f;
-    public Transform[] cameraPoint;
+    private float m_DampTime=0.5f;
+    [SerializeField] private Transform[] cameraPoint;
 
-    public GameObject loser=null;
+    private GameObject loser=null;
+
+
 
     public static GameManager Instance()
     {
@@ -71,7 +74,7 @@ public class GameManager : MonoBehaviour {
         //DontDestroyOnLoad(this);
     }
 
-    public void SetUp()
+    private void SetUp()
     {
         //초기 상황 세팅
         for(int i=0;i < 8; i++)
@@ -98,7 +101,7 @@ public class GameManager : MonoBehaviour {
 
     }
 
-    IEnumerator Starting()
+    private IEnumerator Starting()
     {
         Color temper = verse.color;
         temper.a = 0;
@@ -118,7 +121,7 @@ public class GameManager : MonoBehaviour {
         TurnStart();
     }
 
-    public void Current()
+    private void Current()
     {
         temp = currentpos;
         currentpos = oppositepos;
@@ -164,11 +167,11 @@ public class GameManager : MonoBehaviour {
         playerMove.Move.gameObject.SetActive(false);
         turn_num++;
         TurnStart();
-        //StartCoroutine(ChangeTurn(ThisTurn()));
+        StartCoroutine(ChangeTurn(ThisTurn()));
         
     }
 
-    public void TurnStart() //
+    private void TurnStart() //
     {
         playerMove.ChangePlayer();
         if (ThisTurn() == 0)
@@ -240,7 +243,9 @@ public class GameManager : MonoBehaviour {
     }
 
     // Use this for initialization
-    void Start () {
+    private void Start () {
+        theCamera = GetComponent<Camera>();
+
         checking = new int[70];
         for(int i=0;i < 70; i++)
         {
@@ -251,7 +256,7 @@ public class GameManager : MonoBehaviour {
 
     }   
 
-    IEnumerator Fadein()
+    private IEnumerator Fadein()
     {
         Background.gameObject.SetActive(true);
         for (int i = 0; i < 10; i++)
@@ -276,12 +281,13 @@ public class GameManager : MonoBehaviour {
     }
     */
 
-    IEnumerator ChangeTurn(int k)
+    private IEnumerator ChangeTurn(int k)
     {
         Transform temp = theCamera.transform;//1.73,9.84
         
         if (k == 1)
         {
+            /*
             for (int i = 0; i < 20; i++)
             {
                 temp.position = Vector3.Lerp(cameraPoint[1].position, cameraPoint[0].position, (i + 1) / 20);
@@ -290,11 +296,13 @@ public class GameManager : MonoBehaviour {
                 theCamera.transform.rotation = temp.rotation;
                 yield return new WaitForSeconds(0.01f);
             }
+            */
             theCamera.transform.position = cameraPoint[1].position;
             theCamera.transform.rotation = cameraPoint[1].rotation;
+            yield return new WaitForSeconds(0.01f);
         }
         else if (k == 0)
-        {
+        {/*
             for (int i = 0; i < 20; i++)
             {
                 temp.position = Vector3.Lerp(cameraPoint[0].position, cameraPoint[1].position, (i + 1) / 20);
@@ -303,8 +311,10 @@ public class GameManager : MonoBehaviour {
                 theCamera.transform.rotation = temp.rotation;
                 yield return new WaitForSeconds(0.01f);
             }
+            */
             theCamera.transform.position = cameraPoint[0].position;
             theCamera.transform.rotation = cameraPoint[0].rotation;
+            yield return new WaitForSeconds(0.01f);
         }
     }
 }

@@ -16,11 +16,11 @@ public class PlayerMove : MonoBehaviour {
     public GameObject p1;
     public GameObject p2;
 
-    bool ispause = false;
+    //private bool ispause = false;
 
-    int mode = 0;
+    //private int mode = 0;
 
-    int playerNum = 0;
+    private int playerNum = 0;
 
 	int touch = 1;
 

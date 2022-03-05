@@ -129,15 +129,18 @@ public class BSHolder : MonoBehaviour {
         }
     }
 
+    // 향후 플레이어들이 분리되어 카메라 위치를 다르게 할 때도 사용
     private void OnMouseDrag()
     {
         if (selected && player_num==GameManager.Instance().ThisTurn())   // 블록 드래그
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z));
-            chilBS.transform.position = new Vector3(mousePos.x, 4, mousePos.z+2.8f) * Mathf.Sqrt(2);
+            if(player_num == 0)
+                chilBS.transform.position = new Vector3(mousePos.x, 4, mousePos.z+2.8f) * Mathf.Sqrt(2);
+            else
+                chilBS.transform.position = new Vector3(mousePos.x-2.6f, 4, mousePos.z-16.5f) * Mathf.Sqrt(2);
             GameManager.Instance().gameBoard.ShowBS(chilBS);
         }
-        
     }
 
     private void OnMouseExit()
