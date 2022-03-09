@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Photon.Pun;
+using Photon.Realtime;
 
-public class GameManager : MonoBehaviour {
+public class GameManager : MonoBehaviourPunCallbacks
+{
     public static GameManager _instance = null;
 
     [SerializeField] private GameObject player1;
@@ -244,7 +247,7 @@ public class GameManager : MonoBehaviour {
 
     // Use this for initialization
     private void Start () {
-        theCamera = GetComponent<Camera>();
+        theCamera = FindObjectOfType<Camera>();
 
         checking = new int[70];
         for(int i=0;i < 70; i++)

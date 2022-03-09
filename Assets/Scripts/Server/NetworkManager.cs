@@ -17,7 +17,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             Destroy(this.gameObject);
             Destroy(this);
         }
-        DontDestroyOnLoad(this);
 
         PhotonNetwork.SendRate = 60;
         PhotonNetwork.SerializationRate = 30;

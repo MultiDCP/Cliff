@@ -9,7 +9,6 @@ public class MenuManager : MonoBehaviour {
     public GameObject[] characters;
     private GameObject Characterskin;
     public CameraControl camera_control;
-    public GameManager1 game_manager;
     public RectTransform rt;
  
     void Start () {

@@ -2635,7 +2635,6 @@ MonoBehaviour:
   - {fileID: 1014704595979550, guid: a8746782fa529cb4badf4d8ead504116, type: 3}
   - {fileID: 1177297528551170, guid: 1a5c48da3c5411c46816e8e30ed94a6f, type: 3}
   camera_control: {fileID: 534669906}
-  game_manager: {fileID: 0}
   rt: {fileID: 1104464206}
 --- !u!4 &1205235437
 Transform:
@@ -4327,7 +4326,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Highlighted
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 2004664737}
   m_OnClick:
     m_PersistentCalls:
