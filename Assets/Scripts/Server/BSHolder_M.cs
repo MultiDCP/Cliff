@@ -65,6 +65,7 @@ public class BSHolder_M : MonoBehaviourPunCallbacks, IPunObservable
             {
                 int i = Random.Range(0, GameManager_M.Instance().BlockSets.Length);
                 chilBS = PhotonNetwork.Instantiate(GameManager_M.Instance().BlockSets[i].name, this.transform.position, Quaternion.identity);
+                chilBS.transform.SetParent(this.transform);
                 //chilBS.transform.localScale = new Vector3(3,3,3);
                 holdingBS = true;
             }

@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class GameManager_M : MonoBehaviourPunCallbacks
+public class GameManager_M : MonoBehaviourPunCallbacks, IPunObservable
 {
     public static GameManager_M _instance = null;
 
@@ -62,6 +62,9 @@ public class GameManager_M : MonoBehaviourPunCallbacks
     private GameObject loser=null;
 
     public PhotonView PV;
+    public int[] curChecking;
+    public bool[] isBlockActivate;
+    public bool isAdminLoad = false;
 
     public static GameManager_M Instance()
     {
@@ -89,7 +92,11 @@ public class GameManager_M : MonoBehaviourPunCallbacks
         checking = new int[70];
         for(int i=0;i < 70; i++)
             checking[i] = 0;
-
+        
+        isBlockActivate = new bool[56];
+        for(int i=0; i<56; i++){
+            isBlockActivate[i] = false;
+        }
         if(PhotonNetwork.IsMasterClient){
             PhotonNetwork.Instantiate("P1_M", p1StartPos.transform.position, p1StartPos.transform.rotation);
             theCamera.transform.position = cameraPoint[0].position;
@@ -104,15 +111,31 @@ public class GameManager_M : MonoBehaviourPunCallbacks
 
     }
 
+    private IEnumerator Fadein()
+    {
+        Background.gameObject.SetActive(true);
+        for (int i = 0; i < 10; i++)
+        {
+            Color temp = Background.color;
+            temp.a = Background.color.a - 0.1f;
+            Background.color = temp;
+            yield return new WaitForSeconds(0.02f);
+        }
+        Background.gameObject.SetActive(false);
+        PV.RPC("SetUp", RpcTarget.AllBuffered);
+    }
+
+    [PunRPC]
     private void SetUp()
     {
         if(PhotonNetwork.IsMasterClient){
             //초기 상황 세팅
+            // 맨 처음의 외나무다리를 만든다
             for(int i=0;i < 8; i++)
             {
                 check = 3 +( 7 * i);
-                checking[check+7] = 1;
-                blockmap[check].gameObject.SetActive(true);
+                checking[check+7] = 1; // 10, 17, 24, 31, 38, 45, 52, 59
+                blockmap[check].gameObject.SetActive(true); // 3, 10, 17, 24, 31, 38, 45, 52
             }
             for(int i = 0; i < 7; i++)
             {
@@ -124,7 +147,11 @@ public class GameManager_M : MonoBehaviourPunCallbacks
             oppositepos = 66;
             temp = 0;
         }
-
+        else{
+            currentpos = 66;
+            oppositepos = 3;
+            temp = 0;
+        }
         verse.gameObject.SetActive(true);
         Color temper = verse.color;
         temper.a = 0;
@@ -152,6 +179,7 @@ public class GameManager_M : MonoBehaviourPunCallbacks
         }
 
         isLoadingComplete = true;
+        Debug.Log("Loading Complete");
 
         TurnStart();
     }
@@ -170,14 +198,13 @@ public class GameManager_M : MonoBehaviourPunCallbacks
 
     public void NextTurn()
     {
-
-        if ( ThisTurn() == 0)
+        if (ThisTurn() == 0)
         {
             if (p1merit > 0)
             {
                 p1merit--;
                 //turnleft.text = "Opponent Turn" + "\n" + (Instance().p1merit + 1) + " Move Left";//p2
-                turnleft2.text = "Your Turn " + "\n" + (Instance().p1merit + 1) + " Move Left";//p1
+                //turnleft2.text = "Your Turn " + "\n" + (Instance().p1merit + 1) + " Move Left";//p1
                 return;
             }
 
@@ -189,34 +216,34 @@ public class GameManager_M : MonoBehaviourPunCallbacks
             {
                 p2merit--;
                 //turnleft.text = "Your Turn " + "\n" + (p2merit + 1) + " Move Left";
-                turnleft2.text = "Opponent Turn " + "\n" + (p2merit + 1) + " Move Left";
+                //turnleft2.text = "Opponent Turn " + "\n" + (p2merit + 1) + " Move Left";
                 return;
             }
 
 
         }
-        Current();
+        //Current();
         Debug.Log(p1merit);
         Debug.Log(p2merit);
 
         playerMove.Move.gameObject.SetActive(false);
-        turn_num++;
+        if(PhotonNetwork.IsMasterClient)
+            turn_num++;
         TurnStart();
     }
 
     private void TurnStart() //
     {
-        playerMove.ChangePlayer();
         if (ThisTurn() == 0)
         {
             //holders1.SetActive(true);
             //holders2.SetActive(false);
-            for (int i = 0; i < holders1.transform.childCount; i++)
-            {
-                holders1.transform.GetChild(i).GetComponent<BSHolder_M>().spawnBS();
-                holders2.transform.GetChild(i).GetComponent<BSHolder_M>().spawnBS();
+            if(PhotonNetwork.IsMasterClient){
+                for (int i = 0; i < holders1.transform.childCount; i++){
+                    holders1.transform.GetChild(i).GetComponent<BSHolder_M>().spawnBS();
+                    //holders2.transform.GetChild(i).GetComponent<BSHolder_M>().spawnBS();
+                }
             }
-            
             //turnleft.text = "Opponent Turn" + "\n" + (Instance().p1merit + 1) + " Move Left";//p2
             if(PhotonNetwork.IsMasterClient){
                 turnleft2.text = "Your Turn " + "\n" + (p1merit + 1) + " Move Left";//p1
@@ -225,14 +252,15 @@ public class GameManager_M : MonoBehaviourPunCallbacks
             }
             
         }
-        if (ThisTurn() == 1)
+        else if (ThisTurn() == 1)
         {
             //holders1.SetActive(false);
             //holders2.SetActive(true);
-            for (int i = 0; i < holders2.transform.childCount; i++)
-            {
-                holders1.transform.GetChild(i).GetComponent<BSHolder_M>().spawnBS();
-                holders2.transform.GetChild(i).GetComponent<BSHolder_M>().spawnBS();
+            if(!PhotonNetwork.IsMasterClient){
+                for (int i = 0; i < holders2.transform.childCount; i++){
+                    //holders1.transform.GetChild(i).GetComponent<BSHolder_M>().spawnBS();
+                    holders2.transform.GetChild(i).GetComponent<BSHolder_M>().spawnBS();
+                }
             }
 
             if(PhotonNetwork.IsMasterClient){
@@ -282,30 +310,43 @@ public class GameManager_M : MonoBehaviourPunCallbacks
             //플레이어 2의 승리
         }
         
-    }   
+    }
 
-    private IEnumerator Fadein()
-    {
-        Background.gameObject.SetActive(true);
-        for (int i = 0; i < 10; i++)
-        {
-            Color temp = Background.color;
-            temp.a = Background.color.a - 0.1f;
-            Background.color = temp;
-            yield return new WaitForSeconds(0.02f);
+    private void Update() {
+        if(!PhotonNetwork.IsMasterClient){
+            checking = curChecking;
+            for(int i=0; i<56; i++){
+                blockmap[i].gameObject.SetActive(isBlockActivate[i]);
+            }
         }
-        Background.gameObject.SetActive(false);
-        SetUp();
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if(stream.IsWriting){
+            stream.SendNext(checking);
+            for(int i=0; i<56; i++){
+                stream.SendNext(blockmap[i].gameObject.activeSelf);
+            }
+            stream.SendNext(turn_num);
+        }
+        else{
+            curChecking = (int[])stream.ReceiveNext();
+            for(int i=0; i<56; i++){
+                isBlockActivate[i] = (bool)stream.ReceiveNext();
+            }
+            this.turn_num = (int)stream.ReceiveNext();
+        }
     }
     /*
-    IEnumerator CameraZoom(int k)
-    {
-        for (int i=0; i < 200; i++)
-        {
-            camera.orthographicSize = Mathf.SmoothDamp(camera.orthographicSize, requiredSize, ref m_ZoomSpeed, m_DampTime);
-            camera.transform.position = Vector3.SmoothDamp(camera.transform.position, winpoint[k].position, ref m_ZoomSpeed2,(float)m_DampTime);
-            yield return new WaitForSeconds(0.001f);
-        }
-    }
-    */
+IEnumerator CameraZoom(int k)
+{
+   for (int i=0; i < 200; i++)
+   {
+       camera.orthographicSize = Mathf.SmoothDamp(camera.orthographicSize, requiredSize, ref m_ZoomSpeed, m_DampTime);
+       camera.transform.position = Vector3.SmoothDamp(camera.transform.position, winpoint[k].position, ref m_ZoomSpeed2,(float)m_DampTime);
+       yield return new WaitForSeconds(0.001f);
+   }
+}
+*/
 }
