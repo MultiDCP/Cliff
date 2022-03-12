@@ -18,8 +18,8 @@ public class GameManager_M : MonoBehaviourPunCallbacks, IPunObservable
     public GameObject[] BlockSets;  //
     public GameBoard_M gameBoard; //
     public PlayerMove_M playerMove;
-    [SerializeField] private GameObject holders1;
-    [SerializeField] private GameObject holders2;
+    public GameObject holders1;
+    public GameObject holders2;
 
     [SerializeField] private GameObject p1StartPos;
     [SerializeField] private GameObject p2StartPos;
@@ -65,6 +65,7 @@ public class GameManager_M : MonoBehaviourPunCallbacks, IPunObservable
     public int[] curChecking;
     public bool[] isBlockActivate;
     public bool isAdminLoad = false;
+    private int playerNum;
 
     public static GameManager_M Instance()
     {
@@ -73,6 +74,9 @@ public class GameManager_M : MonoBehaviourPunCallbacks, IPunObservable
 
     private void Awake()
     {
+        if(PhotonNetwork.IsMasterClient) playerNum = 0;
+        else playerNum = 1;
+
         if(_instance == null )
         {
             _instance = this;
@@ -227,23 +231,28 @@ public class GameManager_M : MonoBehaviourPunCallbacks, IPunObservable
         Debug.Log(p2merit);
 
         playerMove.Move.gameObject.SetActive(false);
-        if(PhotonNetwork.IsMasterClient)
-            turn_num++;
-        TurnStart();
+        PV.RPC("IncreaseTurnNum", RpcTarget.AllBuffered);
+        PV.RPC("TurnStart", RpcTarget.All);
+        //TurnStart();
     }
 
+    [PunRPC]
+    public void IncreaseTurnNum(){
+        turn_num++;
+    }
+
+    [PunRPC]
     private void TurnStart() //
     {
         if (ThisTurn() == 0)
         {
             //holders1.SetActive(true);
             //holders2.SetActive(false);
-            if(PhotonNetwork.IsMasterClient){
-                for (int i = 0; i < holders1.transform.childCount; i++){
-                    holders1.transform.GetChild(i).GetComponent<BSHolder_M>().spawnBS();
+            if(playerNum == 0)
+                for (int i = 0; i < 3; i++){
+                    holders1.transform.GetChild(i).GetComponent<BSHolder_M>().spawnBS(i, 0);
                     //holders2.transform.GetChild(i).GetComponent<BSHolder_M>().spawnBS();
                 }
-            }
             //turnleft.text = "Opponent Turn" + "\n" + (Instance().p1merit + 1) + " Move Left";//p2
             if(PhotonNetwork.IsMasterClient){
                 turnleft2.text = "Your Turn " + "\n" + (p1merit + 1) + " Move Left";//p1
@@ -256,12 +265,11 @@ public class GameManager_M : MonoBehaviourPunCallbacks, IPunObservable
         {
             //holders1.SetActive(false);
             //holders2.SetActive(true);
-            if(!PhotonNetwork.IsMasterClient){
-                for (int i = 0; i < holders2.transform.childCount; i++){
+            if(playerNum == 1)
+                for (int i = 0; i < 3; i++){
                     //holders1.transform.GetChild(i).GetComponent<BSHolder_M>().spawnBS();
-                    holders2.transform.GetChild(i).GetComponent<BSHolder_M>().spawnBS();
+                    holders2.transform.GetChild(i).GetComponent<BSHolder_M>().spawnBS(i, 1);
                 }
-            }
 
             if(PhotonNetwork.IsMasterClient){
                 turnleft2.text = "Opponent Turn " + "\n" + (p2merit + 1) + " Move Left";;//p1
@@ -274,10 +282,17 @@ public class GameManager_M : MonoBehaviourPunCallbacks, IPunObservable
 
     public void Resetholder()
     {
-        for (int i = 0; i < holders2.transform.childCount; i++)
-        {
-            holders1.transform.GetChild(i).GetComponent<BSHolder_M>().spawnBS();
-            holders2.transform.GetChild(i).GetComponent<BSHolder_M>().spawnBS();
+        if(ThisTurn() == 0){
+            for(int i = 0; i < holders1.transform.childCount; i++){
+                holders1.transform.GetChild(i).GetComponent<BSHolder_M>().spawnBS(i, 0);
+                //holders2.transform.GetChild(i).GetComponent<BSHolder_M>().spawnBS();
+            }
+        }
+        else if(ThisTurn() == 1){
+            for(int i = 0; i < holders2.transform.childCount; i++){
+                //holders1.transform.GetChild(i).GetComponent<BSHolder_M>().spawnBS();
+                holders2.transform.GetChild(i).GetComponent<BSHolder_M>().spawnBS(i, 1);
+            }
         }
     }
 
@@ -328,14 +343,14 @@ public class GameManager_M : MonoBehaviourPunCallbacks, IPunObservable
             for(int i=0; i<56; i++){
                 stream.SendNext(blockmap[i].gameObject.activeSelf);
             }
-            stream.SendNext(turn_num);
+            //stream.SendNext(turn_num);
         }
         else{
             curChecking = (int[])stream.ReceiveNext();
             for(int i=0; i<56; i++){
                 isBlockActivate[i] = (bool)stream.ReceiveNext();
             }
-            this.turn_num = (int)stream.ReceiveNext();
+            //this.turn_num = (int)stream.ReceiveNext();
         }
     }
     /*

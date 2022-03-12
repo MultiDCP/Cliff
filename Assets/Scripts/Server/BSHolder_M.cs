@@ -27,7 +27,6 @@ public class BSHolder_M : MonoBehaviourPunCallbacks, IPunObservable
 
     private AudioSource theAudio;
 
-    public PhotonView PV;
 
     IEnumerator SelectedChecker()    //코루틴 시작 후 1초가 지나면 SELECTED로
     {
@@ -57,7 +56,7 @@ public class BSHolder_M : MonoBehaviourPunCallbacks, IPunObservable
         theAudio = gameObject.AddComponent<AudioSource>();
     }
 
-    public void spawnBS()
+    public void spawnBS(int BSNum, int ownerNum)
     {
         if (player_num == GameManager_M.Instance().ThisTurn())
         {
@@ -65,9 +64,18 @@ public class BSHolder_M : MonoBehaviourPunCallbacks, IPunObservable
             {
                 int i = Random.Range(0, GameManager_M.Instance().BlockSets.Length);
                 chilBS = PhotonNetwork.Instantiate(GameManager_M.Instance().BlockSets[i].name, this.transform.position, Quaternion.identity);
+                /*
                 chilBS.transform.SetParent(this.transform);
-                //chilBS.transform.localScale = new Vector3(3,3,3);
                 holdingBS = true;
+                */
+                chilBS.GetComponent<PhotonView>().RPC("GiveParam", RpcTarget.AllBuffered, BSNum, ownerNum);
+                /*
+                else{
+                    chilBS.transform.SetParent(opposite_BSTransform);
+                    opposite_BS.holdingBS = true;
+                }
+                */
+                
             }
         }
     }
@@ -96,7 +104,7 @@ public class BSHolder_M : MonoBehaviourPunCallbacks, IPunObservable
                 GameManager_M.Instance().gameBoard.RenderBlockOnBoard();
                 theAudio.clip = audioput;
                 theAudio.Play();
-                Destroy(chilBS);
+                PhotonNetwork.Destroy(chilBS);
                 selected = false;
                 GameManager_M.Instance().CheckGameFinished();
                 GameManager_M.Instance().Resetholder();
@@ -106,10 +114,17 @@ public class BSHolder_M : MonoBehaviourPunCallbacks, IPunObservable
             else //게임보드 위에 없으면 다시 제자리로 & Selected false
             {
                 GameManager_M.Instance().gameBoard.HideShownBlocks();
+                //PV.RPC("SetBSParent", RpcTarget.All, chilBS);
+                /*
                 chilBS.transform.parent = this.transform;
                 holdingBS = true;
-                chilBS.transform.localPosition = Vector3.zero;
-                chilBS.transform.localScale = new Vector3(3, 3, 3);
+                */
+                /*
+                if(chilBS.GetComponent<PhotonView>().IsMine){
+                    chilBS.transform.SetParent(this.transform);
+                    holdingBS = true;
+                }*/
+                chilBS.GetComponent<PhotonView>().RPC("CallRPC", RpcTarget.AllBuffered);
                 selected = false;
             }
         }
@@ -145,7 +160,7 @@ public class BSHolder_M : MonoBehaviourPunCallbacks, IPunObservable
                 chilBS.transform.position = new Vector3(mousePos.x, 4, mousePos.z+2.8f) * Mathf.Sqrt(2);
             else
                 chilBS.transform.position = new Vector3(mousePos.x-2.6f, 4, mousePos.z-16.5f) * Mathf.Sqrt(2);
-            GameManager.Instance().gameBoard.ShowBS(chilBS);
+            GameManager_M.Instance().gameBoard.ShowBS(chilBS);
         }
     }
 
