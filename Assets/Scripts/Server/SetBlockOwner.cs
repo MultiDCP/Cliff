@@ -22,8 +22,39 @@ public class SetBlockOwner : MonoBehaviour
     }
 
     [PunRPC]
-    public void CallRPC(){
+    public void CallSetParentRPC(){
         PV.RPC("SetBSParent", RpcTarget.AllBuffered);
+    }
+
+    [PunRPC]
+    public void CallResetParentRPC(){
+        PV.RPC("ResetParent", RpcTarget.AllBuffered);
+    }
+
+    [PunRPC]
+    public void ResetParent(){
+        Transform holder;
+        if(ownerNum == 0)
+            holder = GameManager_M._instance.holders1.transform;
+        else
+            holder = GameManager_M._instance.holders2.transform;
+
+        switch(BSNum){
+            case 0:
+                holder.GetChild(0).GetComponent<BSHolder_M>().selected = true;
+                holder.GetChild(0).GetComponent<BSHolder_M>().holdingBS = false;
+                break;
+            case 1:
+                holder.GetChild(1).GetComponent<BSHolder_M>().selected = true;
+                holder.GetChild(1).GetComponent<BSHolder_M>().holdingBS = false;
+                break;
+            case 2:
+                holder.GetChild(2).GetComponent<BSHolder_M>().selected = true;
+                holder.GetChild(2).GetComponent<BSHolder_M>().holdingBS = false;
+                break;
+        }
+        this.transform.parent = null;
+        this.transform.localScale = new Vector3(1, 1, 1);
     }
 
     [PunRPC]
@@ -37,14 +68,17 @@ public class SetBlockOwner : MonoBehaviour
         switch(BSNum){
             case 0:
                 this.transform.SetParent(holder.GetChild(0));
+                holder.GetChild(0).GetComponent<BSHolder_M>().selected = false;
                 holder.GetChild(0).GetComponent<BSHolder_M>().holdingBS = true;
                 break;
             case 1:
                 this.transform.SetParent(holder.GetChild(1));
+                holder.GetChild(1).GetComponent<BSHolder_M>().selected = false;
                 holder.GetChild(1).GetComponent<BSHolder_M>().holdingBS = true;
                 break;
             case 2:
                 this.transform.SetParent(holder.GetChild(2));
+                holder.GetChild(2).GetComponent<BSHolder_M>().selected = false;
                 holder.GetChild(2).GetComponent<BSHolder_M>().holdingBS = true;
                 break;
         }

@@ -32,10 +32,13 @@ public class BSHolder_M : MonoBehaviourPunCallbacks, IPunObservable
     {
         Debug.Log("Selected Checker Start.");
         yield return new WaitForSeconds(0.7f);
+        /*
         selected = true;
         chilBS.transform.parent = null;
         holdingBS = false;
         chilBS.transform.localScale = new Vector3(1, 1, 1);
+        */
+        chilBS.GetComponent<PhotonView>().RPC("CallResetParentRPC", RpcTarget.AllBuffered);
         Debug.Log("BS selected.");
         yield return null;
     }
@@ -124,7 +127,7 @@ public class BSHolder_M : MonoBehaviourPunCallbacks, IPunObservable
                     chilBS.transform.SetParent(this.transform);
                     holdingBS = true;
                 }*/
-                chilBS.GetComponent<PhotonView>().RPC("CallRPC", RpcTarget.AllBuffered);
+                chilBS.GetComponent<PhotonView>().RPC("CallSetParentRPC", RpcTarget.AllBuffered);
                 selected = false;
             }
         }
@@ -156,6 +159,7 @@ public class BSHolder_M : MonoBehaviourPunCallbacks, IPunObservable
         if (selected && player_num==GameManager_M.Instance().ThisTurn())   // 블록 드래그
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z));
+            Debug.Log(mousePos);
             if(player_num == 0)
                 chilBS.transform.position = new Vector3(mousePos.x, 4, mousePos.z+2.8f) * Mathf.Sqrt(2);
             else
