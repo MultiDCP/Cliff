@@ -31,7 +31,7 @@ public class GameBoard_M : MonoBehaviourPunCallbacks, IPunObservable
     void Start()    //초기화
     {
         theAudio = gameObject.AddComponent<AudioSource>();
-        if(PhotonNetwork.IsMasterClient){
+        //if(PhotonNetwork.IsMasterClient){
             int index = 0;
             for (int i = 0; i < yGrid; i++)
             {
@@ -44,7 +44,7 @@ public class GameBoard_M : MonoBehaviourPunCallbacks, IPunObservable
             playerLoc = new int[2];
             playerLoc[0] = -1;
             playerLoc[1] = -1;
-        }
+        //}
     }
 
     IEnumerator SetCharacter(){
@@ -86,8 +86,7 @@ public class GameBoard_M : MonoBehaviourPunCallbacks, IPunObservable
         return false;
     }
 
-    public void ShowBlockOnBoard(GameObject block)
-    {
+    public void ShowBlockOnBoard(GameObject block){
         for (int i = 0; i < xGrid; i++)
         {
             if (board[i, 0].transform.position.x-0.6 < block.transform.position.x && block.transform.position.x <= board[i, 0].transform.position.x + 0.6)
@@ -96,13 +95,23 @@ public class GameBoard_M : MonoBehaviourPunCallbacks, IPunObservable
                 {
                     if (board[0, j].transform.position.z - 0.6 < block.transform.position.z && block.transform.position.z <= board[0, j].transform.position.z + 0.6)
                     {
-                        shownBlock[i, j] = true;
-                        GameManager_M.Instance().blockmap[i + xGrid * j].SetActive(true);
+                        if(PhotonNetwork.IsMasterClient){
+                            shownBlock[i, j] = true;
+                            GameManager_M.Instance().blockmap[i + xGrid * j].SetActive(true);
+                        }
+                        else
+                            PV.RPC("ShowBlockForAdmin", RpcTarget.MasterClient, i, j);
                         return;
                     }
                 }
             }
         }
+    }
+
+    [PunRPC]
+    public void ShowBlockForAdmin(int i, int j){
+        shownBlock[i, j] = true;
+        GameManager_M.Instance().blockmap[i + xGrid * j].SetActive(true);
     }
 
     public void HideShownBlocks()
@@ -113,14 +122,23 @@ public class GameBoard_M : MonoBehaviourPunCallbacks, IPunObservable
             {
                 if (shownBlock[i, j])
                 {
-                    shownBlock[i, j] = false;
-                    if (GameManager_M.Instance().checking[i + xGrid * (j+1)] == 0)
-                    {
-                        GameManager_M.Instance().blockmap[i + xGrid * j].SetActive(false);
+                    if(PhotonNetwork.IsMasterClient){
+                        shownBlock[i, j] = false;
+                        if (GameManager_M.Instance().checking[i + xGrid * (j+1)] == 0)
+                            GameManager_M.Instance().blockmap[i + xGrid * j].SetActive(false);
                     }
+                    else
+                        PV.RPC("HideBlockForAdmin", RpcTarget.MasterClient, i, j);
                 }
             }
         }
+    }
+
+    [PunRPC]
+    public void HideBlockForAdmin(int i, int j){
+        shownBlock[i, j] = false;
+        if (GameManager_M.Instance().checking[i + xGrid * (j+1)] == 0)
+            GameManager_M.Instance().blockmap[i + xGrid * j].SetActive(false);
     }
 
     public void ShowBS(GameObject BS) //원래 render되었던 Block 제거,block위치 체크하여 그 위치에 block render
@@ -132,16 +150,16 @@ public class GameBoard_M : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    public void RenderBlockOnBoard()
-    {
-        for (int i = 0; i < xGrid; i++)
-        {
-            for (int j = 0; j < yGrid; j++)
-            {
-                if (shownBlock[i, j])
-                {
-                    shownBlock[i, j] = false;
-                    GameManager_M.Instance().checking[i + xGrid * (j+1)] = 1;
+    public void RenderBlockOnBoard(){
+        for (int i = 0; i < xGrid; i++){
+            for (int j = 0; j < yGrid; j++){
+                if(PhotonNetwork.IsMasterClient)
+                    if (shownBlock[i, j]){
+                        shownBlock[i, j] = false;
+                        GameManager_M.Instance().checking[i + xGrid * (j+1)] = 1;
+                    }
+                else{
+                    PV.RPC("RenderBlockForAdmin", RpcTarget.MasterClient, i, j);
                 }
             }
         }
@@ -152,8 +170,14 @@ public class GameBoard_M : MonoBehaviourPunCallbacks, IPunObservable
                 DeleteRow(j);
             }
         }
-        
+    }
 
+    [PunRPC]
+    public void RenderBlockForAdmin(int i, int j){
+        if (shownBlock[i, j]){
+            shownBlock[i, j] = false;
+            GameManager_M.Instance().checking[i + xGrid * (j+1)] = 1;
+        }
     }
 
     public bool LineCheck(int j)  //만약 i 라인이 채워져있으면->모두 checking 이면 라인을 없애고 메리트를 줌.
@@ -313,16 +337,20 @@ public class GameBoard_M : MonoBehaviourPunCallbacks, IPunObservable
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        /*
         if(GameManager_M._instance.isLoadingComplete)
             if(stream.IsWriting){
-                stream.SendNext(board);
-                stream.SendNext(shownBlock);
+                for (int i = 0; i < yGrid; i++){
+                    for (int j = 0; j < xGrid; j++){
+                        stream.SendNext(shownBlock[j, i]);
+                    }
+                }
             }
             else{
-                board = (GameObject[,])stream.ReceiveNext();
-                shownBlock = (bool[,])stream.ReceiveNext();
-            }
-        */
+                for (int i = 0; i < yGrid; i++){
+                    for (int j = 0; j < xGrid; j++){
+                        this.shownBlock[j, i] = (bool)stream.ReceiveNext();
+                    }
+                }             
+            } 
     }
 }

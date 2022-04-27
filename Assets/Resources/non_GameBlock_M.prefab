@@ -4140,6 +4140,7 @@ MonoBehaviour:
   audioFall: {fileID: 8300000, guid: 86405885b5abb9b41a8b2f746aa633f2, type: 3}
   ground1: {fileID: 0}
   ground2: {fileID: 0}
+  PV: {fileID: -1312712752668953284}
 --- !u!114 &-1312712752668953284
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4158,7 +4159,9 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 3321360718617212126}
+  - {fileID: 2063176128913947455}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0

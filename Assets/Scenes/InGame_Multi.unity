@@ -174,8 +174,6 @@ MonoBehaviour:
   selected: 0
   audiospin: {fileID: 8300000, guid: 53ca6651a388a2546a06db7fbaee3acc, type: 3}
   audioput: {fileID: 8300000, guid: 1dcd239786d518a4ca2faba27ad4cece, type: 3}
-  opposite_BSTransform: {fileID: 513694075}
-  opposite_BS: {fileID: 513694072}
 --- !u!65 &14952723
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -590,8 +588,6 @@ MonoBehaviour:
   selected: 0
   audiospin: {fileID: 8300000, guid: 53ca6651a388a2546a06db7fbaee3acc, type: 3}
   audioput: {fileID: 8300000, guid: 1dcd239786d518a4ca2faba27ad4cece, type: 3}
-  opposite_BSTransform: {fileID: 705097318}
-  opposite_BS: {fileID: 705097315}
 --- !u!65 &118682474
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -936,8 +932,6 @@ MonoBehaviour:
   selected: 0
   audiospin: {fileID: 8300000, guid: 53ca6651a388a2546a06db7fbaee3acc, type: 3}
   audioput: {fileID: 8300000, guid: 1dcd239786d518a4ca2faba27ad4cece, type: 3}
-  opposite_BSTransform: {fileID: 936508575}
-  opposite_BS: {fileID: 936508572}
 --- !u!65 &335941229
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1385,8 +1379,6 @@ MonoBehaviour:
   selected: 0
   audiospin: {fileID: 8300000, guid: 53ca6651a388a2546a06db7fbaee3acc, type: 3}
   audioput: {fileID: 8300000, guid: 1dcd239786d518a4ca2faba27ad4cece, type: 3}
-  opposite_BSTransform: {fileID: 14952726}
-  opposite_BS: {fileID: 14952722}
 --- !u!23 &513694073
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1988,8 +1980,6 @@ MonoBehaviour:
   selected: 0
   audiospin: {fileID: 8300000, guid: 53ca6651a388a2546a06db7fbaee3acc, type: 3}
   audioput: {fileID: 8300000, guid: 1dcd239786d518a4ca2faba27ad4cece, type: 3}
-  opposite_BSTransform: {fileID: 118682477}
-  opposite_BS: {fileID: 118682473}
 --- !u!23 &705097316
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2399,8 +2389,6 @@ MonoBehaviour:
   selected: 0
   audiospin: {fileID: 8300000, guid: 53ca6651a388a2546a06db7fbaee3acc, type: 3}
   audioput: {fileID: 8300000, guid: 1dcd239786d518a4ca2faba27ad4cece, type: 3}
-  opposite_BSTransform: {fileID: 335941232}
-  opposite_BS: {fileID: 335941228}
 --- !u!23 &936508573
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -7462,16 +7450,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: non_GameBlock_M
-      objectReference: {fileID: 0}
-    - target: {fileID: 3321360718617212126, guid: f37bc2dc3abda5d4cb71ec1609a6f8aa,
-        type: 3}
-      propertyPath: p1
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3321360718617212126, guid: f37bc2dc3abda5d4cb71ec1609a6f8aa,
-        type: 3}
-      propertyPath: p2
-      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 3321360718617212126, guid: f37bc2dc3abda5d4cb71ec1609a6f8aa,
         type: 3}

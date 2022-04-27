@@ -116,6 +116,7 @@ public class BSHolder_M : MonoBehaviourPunCallbacks, IPunObservable
             }
             else //게임보드 위에 없으면 다시 제자리로 & Selected false
             {
+                //GameManager_M.Instance().gameBoard.HideShownBlocks();
                 GameManager_M.Instance().gameBoard.HideShownBlocks();
                 //PV.RPC("SetBSParent", RpcTarget.All, chilBS);
                 /*
@@ -159,7 +160,6 @@ public class BSHolder_M : MonoBehaviourPunCallbacks, IPunObservable
         if (selected && player_num==GameManager_M.Instance().ThisTurn())   // 블록 드래그
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z));
-            Debug.Log(mousePos);
             if(player_num == 0)
                 chilBS.transform.position = new Vector3(mousePos.x, 4, mousePos.z+2.8f) * Mathf.Sqrt(2);
             else

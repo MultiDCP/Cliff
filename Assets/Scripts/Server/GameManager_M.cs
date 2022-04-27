@@ -329,7 +329,7 @@ public class GameManager_M : MonoBehaviourPunCallbacks, IPunObservable
 
     private void Update() {
         if(!PhotonNetwork.IsMasterClient){
-            checking = curChecking;
+            //checking = curChecking;
             for(int i=0; i<56; i++){
                 blockmap[i].gameObject.SetActive(isBlockActivate[i]);
             }
@@ -339,14 +339,20 @@ public class GameManager_M : MonoBehaviourPunCallbacks, IPunObservable
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if(stream.IsWriting){
-            stream.SendNext(checking);
+            for(int i=0; i<70; i++){
+                stream.SendNext(checking[i]);
+            }
+            //stream.SendNext(checking);
             for(int i=0; i<56; i++){
                 stream.SendNext(blockmap[i].gameObject.activeSelf);
             }
             //stream.SendNext(turn_num);
         }
         else{
-            curChecking = (int[])stream.ReceiveNext();
+            for(int i=0; i<70; i++){
+                this.checking[i] = (int)stream.ReceiveNext();
+            }
+            //curChecking = (int[])stream.ReceiveNext();
             for(int i=0; i<56; i++){
                 isBlockActivate[i] = (bool)stream.ReceiveNext();
             }
